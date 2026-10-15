@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f8fc">
+  <title>教学小工具箱 · Teaching Toolkit</title>
+  <meta name="description" content="把常用教学小工具集中在一个简洁、方便的入口。">
+  <style>
+    :root {
+      --bg: #f7f8fc; --surface: #ffffff; --text: #172033; --muted: #737d91;
+      --line: #e8ebf2; --accent: #5b63e6; --accent-soft: #eef0ff;
+      --shadow: 0 12px 34px rgba(25, 35, 75, .06); --radius: 20px;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    button, input, select { font: inherit; }
+    button, a, select { -webkit-tap-highlight-color: transparent; }
+    a { color: inherit; text-decoration: none; }
+    .shell { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
+    header { padding: 24px 0 16px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .brand-mark { width: 44px; height: 44px; border-radius: 15px; display: grid; place-items: center; color: white; background: linear-gradient(145deg, #6c73f3, #7c55cf); box-shadow: 0 8px 18px #6c73f333; flex: 0 0 auto; }
+    .brand-mark svg { width: 24px; height: 24px; }
+    .brand h1 { font-size: 17px; margin: 0; letter-spacing: -.3px; }
+    .brand p { font-size: 12px; color: var(--muted); margin: 3px 0 0; }
+    .top-actions { display: flex; align-items: center; gap: 10px; }
+    .pill { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; min-height: 42px; padding: 0 14px; color: #3f4960; cursor: pointer; }
+    .pill:hover { border-color: #c7cafa; background: #fbfbff; }
+    .hero { padding: 44px 0 28px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 24px; }
+    .eyebrow { color: var(--accent); font-size: 12px; font-weight: 750; letter-spacing: 1.3px; text-transform: uppercase; }
+    .hero h2 { font-size: clamp(30px, 5vw, 47px); line-height: 1.1; letter-spacing: -1.7px; margin: 12px 0 12px; max-width: 670px; }
+    .hero p { margin: 0; max-width: 620px; color: var(--muted); font-size: 15px; line-height: 1.75; }
+    .hero-stat { border: 1px solid var(--line); background: #fff; padding: 16px 20px; border-radius: 18px; min-width: 130px; }
+    .hero-stat strong { font-size: 27px; display: block; letter-spacing: -1px; }
+    .hero-stat span { color: var(--muted); font-size: 12px; }
+    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin: 14px 0 20px; }
+    .search-wrap { position: relative; flex: 1; max-width: 390px; }
+    .search-wrap svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: #8b93a5; }
+    .search { width: 100%; height: 46px; border: 1px solid var(--line); background: #fff; border-radius: 14px; padding: 0 14px 0 42px; outline: none; color: var(--text); }
+    .search:focus { border-color: #9da2f7; box-shadow: 0 0 0 4px #5b63e612; }
+    .toolbar-right { display: flex; align-items: center; gap: 9px; }
+    .select { height: 44px; border: 1px solid var(--line); border-radius: 13px; background: #fff; padding: 0 34px 0 12px; color: #4b556b; max-width: 170px; }
+    .section-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 26px 0 14px; }
+    .section-head h3 { margin: 0; font-size: 16px; letter-spacing: -.2px; }
+    .section-head span { font-size: 12px; color: var(--muted); }
+    .categories { display: flex; flex-wrap: wrap; gap: 8px; }
+    .category-chip { border: 1px solid var(--line); background: #fff; color: #687187; padding: 9px 14px; border-radius: 999px; font-size: 13px; cursor: pointer; min-height: 38px; }
+    .category-chip.active { color: var(--accent); border-color: #d9dcff; background: var(--accent-soft); font-weight: 650; }
+    .category-chip .count { opacity: .7; margin-left: 5px; }
+    .tools-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .tool-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 21px; min-height: 220px; display: flex; flex-direction: column; box-shadow: 0 3px 10px #17203304; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+    .tool-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: #d9dcff; }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .tool-icon { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 16px; }
+    .tool-icon svg { width: 24px; height: 24px; }
+    .violet { color: #5b63e6; background: #eef0ff; } .peach { color: #c66d38; background: #fff0e5; }
+    .mint { color: #248d78; background: #e4f8f2; } .blue { color: #3678c8; background: #e8f3ff; }
+    .card-menu { border: 0; background: transparent; color: #9aa1b0; cursor: pointer; font-size: 20px; padding: 4px 7px; border-radius: 8px; }
+    .card-menu:hover { background: #f3f4f8; }
+    .tool-card h4 { font-size: 17px; margin: 18px 0 7px; letter-spacing: -.3px; }
+    .tool-card p { font-size: 13px; color: var(--muted); line-height: 1.65; margin: 0; }
+    .card-bottom { margin-top: auto; padding-top: 20px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .tag { font-size: 11px; color: #717b91; background: #f5f6fa; border-radius: 7px; padding: 6px 9px; }
+    .launch { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 0 14px; background: var(--accent); color: white; border-radius: 11px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+    .launch:hover { background: #4d55d3; }
+    .launch svg { width: 14px; height: 14px; }
+    .empty { display: none; border: 1px dashed #d9deea; border-radius: 18px; text-align: center; padding: 40px 20px; color: var(--muted); background: #ffffff80; }
+    .footer { display: flex; justify-content: space-between; gap: 15px; padding: 34px 0 24px; color: #8a92a3; font-size: 12px; }
+    .modal-backdrop { display: none; position: fixed; inset: 0; z-index: 10; background: #18203955; backdrop-filter: blur(7px); padding: 18px; align-items: center; justify-content: center; }
+    .modal-backdrop.show { display: flex; }
+    .modal { width: min(440px, 100%); background: #fff; border: 1px solid #ffffffb0; border-radius: 22px; box-shadow: 0 25px 90px #12182b30; padding: 24px; }
+    .modal h3 { margin: 0 0 8px; font-size: 19px; }
+    .modal p { color: var(--muted); font-size: 13px; line-height: 1.6; margin: 0 0 20px; }
+    .field-label { display: block; font-size: 12px; font-weight: 700; color: #586177; margin: 14px 0 7px; }
+    .field { width: 100%; min-height: 44px; border: 1px solid var(--line); border-radius: 12px; padding: 0 12px; background: white; color: var(--text); }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 22px; }
+    .primary { border: 0; background: var(--accent); color: white; min-height: 42px; padding: 0 16px; border-radius: 11px; cursor: pointer; font-weight: 650; }
+    .secondary { border: 1px solid var(--line); background: white; color: #5d667a; min-height: 42px; padding: 0 16px; border-radius: 11px; cursor: pointer; }
+    .toast { position: fixed; bottom: 22px; left: 50%; transform: translate(-50%, 20px); background: #20283c; color: white; border-radius: 12px; padding: 12px 16px; font-size: 13px; opacity: 0; pointer-events: none; transition: .2s; z-index: 20; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid #858af5; outline-offset: 3px; }
+    @media (max-width: 800px) { .tools-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .hero { padding-top: 34px; } }
+    @media (max-width: 560px) {
+      .shell { width: min(100% - 28px, 500px); }
+      header { padding-top: 15px; }
+      .brand-mark { width: 40px; height: 40px; border-radius: 13px; }
+      .brand h1 { font-size: 15px; } .brand p { font-size: 11px; }
+      .top-actions .pill { min-height: 39px; padding: 0 10px; font-size: 12px; }
+      .hero { display: block; padding: 35px 0 18px; }
+      .hero h2 { font-size: 35px; letter-spacing: -1.2px; }
+      .hero p { font-size: 14px; }
+      .hero-stat { display: none; }
+      .toolbar { align-items: stretch; flex-direction: column; }
+      .search-wrap { max-width: none; }
+      .toolbar-right { justify-content: space-between; }
+      .select { flex: 1; max-width: none; }
+      .tools-grid { grid-template-columns: 1fr; gap: 12px; }
+      .tool-card { min-height: 195px; padding: 18px; }
+      .tool-card h4 { margin-top: 14px; }
+      .section-head { margin-top: 24px; }
+      .footer { flex-direction: column; padding-bottom: 20px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; scroll-behavior: auto !important; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="shell topbar">
+      <a class="brand" href="#" aria-label="教学小工具箱首页">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><path d="M17.5 14v7M14 17.5h7"/></svg>
+        </div>
+        <div><h1>教学小工具箱</h1><p>Teaching Toolkit</p></div>
+      </a>
+      <div class="top-actions">
+        <button class="pill" id="manageCategories" type="button">管理分类</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">YOUR CLASSROOM, SIMPLIFIED</div>
+        <h2>让每一堂课，<br>都更轻松一点。</h2>
+        <p>把常用的教学小工具放在一起。快速找到需要的功能，少一点切换，多一点专注。</p>
+      </div>
+      <div class="hero-stat"><strong id="toolCount">02</strong><span>个可用工具</span></div>
+    </section>
+
+    <div class="toolbar">
+      <label class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <input class="search" id="search" type="search" placeholder="搜索工具名称或用途…" aria-label="搜索工具">
+      </label>
+      <div class="toolbar-right">
+        <select class="select" id="sort" aria-label="工具排序">
+          <option value="default">默认排序</option><option value="name">按名称排序</option>
+        </select>
+        <button class="pill" id="resetFilters" type="button">重置</button>
+      </div>
+    </div>
+
+    <section>
+      <div class="section-head"><h3>工具分类</h3><span>选择分类，快速筛选</span></div>
+      <div class="categories" id="categories" aria-label="工具分类"></div>
+    </section>
+
+    <section>
+      <div class="section-head"><h3 id="listTitle">全部工具</h3><span id="resultCount">2 个工具</span></div>
+      <div class="tools-grid" id="toolsGrid"></div>
+      <div class="empty" id="emptyState">没有找到符合条件的工具。<br>试试其他关键词或分类。</div>
+    </section>
+
+    <footer class="footer"><span>© <span id="year"></span> Teaching Toolkit</span><span>简洁 · 实用 · 为课堂而设计</span></footer>
+  </main>
+
+  <div class="modal-backdrop" id="categoryModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <h3 id="modalTitle">管理工具分类</h3>
+      <p>新增分类后，可以在工具卡片的菜单中调整工具归属。分类设置保存在当前浏览器中。</p>
+      <label class="field-label" for="newCategory">新增分类名称</label>
+      <input class="field" id="newCategory" maxlength="24" placeholder="例如：课堂互动">
+      <div class="field-label">现有分类</div>
+      <div id="categoryManagerList" style="display:grid;gap:8px"></div>
+      <div class="modal-actions"><button class="secondary" id="closeModal" type="button">关闭</button><button class="primary" id="addCategory" type="button">添加分类</button></div>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const STORAGE_KEY = "teaching-toolkit-settings-v1";
+    const defaults = {
+      categories: ["全部工具", "词汇学习", "课堂互动", "效率工具"],
+      assignments: { vocabulary: "词汇学习", wheel: "课堂互动" }
+    };
+    const tools = [
+      { id:"vocabulary", name:"词汇卡片", en:"Vocabulary Cards", desc:"制作与复习词汇卡片，让词汇练习更直观、更有互动感。", category:"词汇学习", url:"https://wordcards-jink.onrender.com/", tag:"学习练习", icon:"cards", tone:"violet" },
+      { id:"wheel", name:"大转盘", en:"Spinning Wheel", desc:"随机抽人、抽题或决定课堂任务，让课堂互动更有趣。", category:"课堂互动", url:"https://spinning-wheel-nk6h.onrender.com/", tag:"随机选择", icon:"wheel", tone:"peach" }
+    ];
+    let settings = loadSettings();
+    let activeCategory = "全部工具";
+    let query = "";
+    let sortMode = "default";
+    let menuToolId = null;
+
+    function loadSettings() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+        if (saved && Array.isArray(saved.categories) && saved.assignments) {
+          return { categories: [...new Set([...defaults.categories, ...saved.categories])], assignments: { ...defaults.assignments, ...saved.assignments } };
+        }
+      } catch (e) {}
+      return structuredClone(defaults);
+    }
+    function saveSettings() { localStorage.setItem(STORAGE_KEY, JSON.stringify(settings)); }
+    const icons = {
+      cards: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="13" height="16" rx="2"/><path d="M4 7v12a2 2 0 0 0 2 2h11M10 8h7M10 12h5"/></svg>',
+      wheel: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8.5"/><path d="m12 4.5 2.2 6.2 6.3 2.3M12 13l-5.5-5.4M12 13l-1 8.4M12 13l8.1-3.2M12 13l-7.7 3.2"/><path d="m9 2 3 2.5L15 2"/></svg>',
+      external: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3h7v7M10 14 21 3"/><path d="M19 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6"/></svg>'
+    };
+    function categoryFor(tool) { return settings.assignments[tool.id] || tool.category; }
+    function renderCategories() {
+      const el = document.getElementById("categories");
+      const cats = settings.categories.filter(c => c === "全部工具" || tools.some(t => categoryFor(t) === c) || c !== "全部工具");
+      el.innerHTML = cats.map(c => {
+        const count = c === "全部工具" ? tools.length : tools.filter(t => categoryFor(t) === c).length;
+        return `<button class="category-chip ${activeCategory===c?"active":""}" type="button" data-category="${escapeHtml(c)}">${escapeHtml(c)}<span class="count">${count}</span></button>`;
+      }).join("");
+      el.querySelectorAll("[data-category]").forEach(btn => btn.addEventListener("click", () => { activeCategory = btn.dataset.category; render(); }));
+    }
+    function renderTools() {
+      let list = tools.filter(t => {
+        const catMatch = activeCategory === "全部工具" || categoryFor(t) === activeCategory;
+        const haystack = `${t.name} ${t.en} ${t.desc} ${categoryFor(t)} ${t.tag}`.toLowerCase();
+        return catMatch && haystack.includes(query.toLowerCase());
+      });
+      if (sortMode === "name") list.sort((a,b)=>a.name.localeCompare(b.name,"zh-CN"));
+      document.getElementById("toolCount").textContent = String(tools.length).padStart(2,"0");
+      document.getElementById("resultCount").textContent = `${list.length} 个工具`;
+      document.getElementById("listTitle").textContent = activeCategory === "全部工具" ? "全部工具" : activeCategory;
+      const grid = document.getElementById("toolsGrid");
+      grid.innerHTML = list.map(t => `
+        <article class="tool-card">
+          <div class="card-top"><div class="tool-icon ${t.tone}">${icons[t.icon]}</div>
+            <button class="card-menu" type="button" data-manage="${t.id}" aria-label="管理${escapeHtml(t.name)}分类" title="调整分类">···</button></div>
+          <h4>${escapeHtml(t.name)}</h4><p>${escapeHtml(t.desc)}</p>
+          <div class="card-bottom"><span class="tag">${escapeHtml(categoryFor(t))}</span>
+            <a class="launch" href="${t.url}" target="_blank" rel="noopener noreferrer">打开工具 ${icons.external}</a></div>
+        </article>`).join("");
+      document.getElementById("emptyState").style.display = list.length ? "none" : "block";
+      grid.style.display = list.length ? "grid" : "none";
+      grid.querySelectorAll("[data-manage]").forEach(btn => btn.addEventListener("click", () => openAssign(btn.dataset.manage)));
+    }
+    function render() { renderCategories(); renderTools(); }
+    function escapeHtml(value) { return String(value).replace(/[&<>"']/g, ch => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[ch])); }
+    function showToast(message) {
+      const el = document.getElementById("toast"); el.textContent = message; el.classList.add("show");
+      clearTimeout(showToast.timer); showToast.timer = setTimeout(()=>el.classList.remove("show"), 2300);
+    }
+    function openModal() {
+      document.getElementById("categoryModal").classList.add("show");
+      document.getElementById("newCategory").focus();
+      renderCategoryManager();
+    }
+    function closeModal() { document.getElementById("categoryModal").classList.remove("show"); }
+    function renderCategoryManager() {
+      const el = document.getElementById("categoryManagerList");
+      el.innerHTML = settings.categories.filter(c=>c!=="全部工具").map(c => {
+        const used = tools.some(t=>categoryFor(t)===c);
+        const removable = !used && !["词汇学习","课堂互动","效率工具"].includes(c);
+        return `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-size:13px"><span>${escapeHtml(c)}${used?' <span style="color:#9299a8">· 使用中</span>':''}</span>${removable?`<button type="button" data-delete-cat="${escapeHtml(c)}" class="secondary" style="min-height:30px;padding:0 9px;font-size:11px">删除</button>`:""}</div>`;
+      }).join("");
+      el.querySelectorAll("[data-delete-cat]").forEach(btn=>btn.addEventListener("click",()=>{
+        settings.categories = settings.categories.filter(c=>c!==btn.dataset.deleteCat); saveSettings(); renderCategoryManager(); render();
+        showToast("分类已删除");
+      }));
+    }
+    function openAssign(id) {
+      const tool = tools.find(t=>t.id===id); if(!tool) return;
+      const choices = settings.categories.filter(c=>c!=="全部工具").map(c=>`<option value="${escapeHtml(c)}" ${categoryFor(tool)===c?"selected":""}>${escapeHtml(c)}</option>`).join("");
+      const modal = document.getElementById("categoryModal");
+      document.getElementById("modalTitle").textContent = `调整「${tool.name}」分类`;
+      modal.querySelector(".modal > p").textContent = "选择一个分类，工具会立即显示在对应分类下。";
+      document.getElementById("newCategory").parentElement.style.display = "none";
+      document.querySelector(".modal .field-label:not([for])").style.display = "none";
+      openModal();
+      document.getElementById("categoryManagerList").innerHTML = `<label class="field-label" for="assignSelect">工具分类</label><select class="field" id="assignSelect">${choices}</select>`;
+      document.getElementById("addCategory").textContent = "保存分类";
+      document.getElementById("addCategory").onclick = () => {
+        settings.assignments[id] = document.getElementById("assignSelect").value; saveSettings();
+        document.getElementById("newCategory").parentElement.style.display = "";
+        document.querySelector(".modal .field-label:not([for])").style.display = "";
+        document.getElementById("addCategory").textContent = "添加分类";
+        document.getElementById("addCategory").onclick = addCategory;
+        document.getElementById("modalTitle").textContent = "管理工具分类";
+        document.getElementById("categoryModal").querySelector(".modal > p").textContent = "新增分类后，可以在工具卡片的菜单中调整工具归属。分类设置保存在当前浏览器中。";
+        render(); closeModal(); showToast("工具分类已更新");
+      };
+    }
+    function addCategory() {
+      const input = document.getElementById("newCategory");
+      const name = input.value.trim();
+      if (!name) { showToast("请先输入分类名称"); input.focus(); return; }
+      if (name === "全部工具" || settings.categories.includes(name)) { showToast("这个分类已存在"); return; }
+      settings.categories.push(name); saveSettings(); input.value = ""; render(); renderCategoryManager(); showToast("新分类已添加");
+    }
+    document.getElementById("search").addEventListener("input", e=>{query=e.target.value.trim();renderTools();});
+    document.getElementById("sort").addEventListener("change", e=>{sortMode=e.target.value;renderTools();});
+    document.getElementById("resetFilters").addEventListener("click",()=>{query="";sortMode="default";activeCategory="全部工具";document.getElementById("search").value="";document.getElementById("sort").value="default";render();});
+    document.getElementById("manageCategories").addEventListener("click",()=>{
+      document.getElementById("modalTitle").textContent="管理工具分类";
+      document.getElementById("categoryModal").querySelector(".modal > p").textContent="新增分类后，可以在工具卡片的菜单中调整工具归属。分类设置保存在当前浏览器中。";
+      document.getElementById("newCategory").parentElement.style.display="";
+      document.querySelector(".modal .field-label:not([for])").style.display="";
+      document.getElementById("addCategory").textContent="添加分类";
+      document.getElementById("addCategory").onclick=addCategory;
+      openModal();
+    });
+    document.getElementById("addCategory").addEventListener("click", addCategory);
+    document.getElementById("closeModal").addEventListener("click",closeModal);
+    document.getElementById("categoryModal").addEventListener("click",e=>{if(e.target.id==="categoryModal")closeModal();});
+    document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal();});
+    document.getElementById("year").textContent = new Date().getFullYear();
+    render();
+  </script>
+</body>
+</html>
