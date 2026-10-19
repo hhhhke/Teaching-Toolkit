@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f8fc">
+  <title>教学小工具箱 · Teaching Toolkit</title>
+  <meta name="description" content="把常用教学小工具集中在一个简洁、方便的入口。">
+  <style>
+    :root {
+      --bg: #f7f8fc; --surface: #ffffff; --text: #172033; --muted: #737d91;
+      --line: #e8ebf2; --accent: #5b63e6; --accent-soft: #eef0ff;
+      --shadow: 0 12px 34px rgba(25, 35, 75, .06); --radius: 20px;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    button, input, select { font: inherit; }
+    button, a, select { -webkit-tap-highlight-color: transparent; }
+    a { color: inherit; text-decoration: none; }
+    .shell { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
+    header { padding: 24px 0 16px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .brand-mark { width: 44px; height: 44px; border-radius: 15px; display: grid; place-items: center; color: white; background: linear-gradient(145deg, #6c73f3, #7c55cf); box-shadow: 0 8px 18px #6c73f333; flex: 0 0 auto; }
+    .brand-mark svg { width: 24px; height: 24px; }
+    .brand h1 { font-size: 17px; margin: 0; letter-spacing: -.3px; }
+    .brand p { font-size: 12px; color: var(--muted); margin: 3px 0 0; }
+    .top-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+    .pill { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; min-height: 42px; padding: 0 14px; color: #3f4960; cursor: pointer; }
+    .pill:hover { border-color: #c7cafa; background: #fbfbff; }
+    .hero { padding: 44px 0 28px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 24px; }
+    .eyebrow { color: var(--accent); font-size: 12px; font-weight: 750; letter-spacing: 1.3px; text-transform: uppercase; }
+    .hero h2 { font-size: clamp(30px, 5vw, 47px); line-height: 1.1; letter-spacing: -1.7px; margin: 12px 0 12px; max-width: 670px; }
+    .hero p { margin: 0; max-width: 620px; color: var(--muted); font-size: 15px; line-height: 1.75; }
+    .hero-stat { border: 1px solid var(--line); background: #fff; padding: 16px 20px; border-radius: 18px; min-width: 130px; }
+    .hero-stat strong { font-size: 27px; display: block; letter-spacing: -1px; }
+    .hero-stat span { color: var(--muted); font-size: 12px; }
+    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin: 14px 0 20px; }
+    .search-wrap { position: relative; flex: 1; max-width: 390px; }
+    .search-wrap svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: #8b93a5; }
+    .search { width: 100%; height: 46px; border: 1px solid var(--line); background: #fff; border-radius: 14px; padding: 0 14px 0 42px; outline: none; color: var(--text); }
+    .search:focus { border-color: #9da2f7; box-shadow: 0 0 0 4px #5b63e612; }
+    .toolbar-right { display: flex; align-items: center; gap: 9px; }
+    .select { height: 44px; border: 1px solid var(--line); border-radius: 13px; background: #fff; padding: 0 34px 0 12px; color: #4b556b; max-width: 170px; }
+    .section-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 26px 0 14px; }
+    .section-head h3 { margin: 0; font-size: 16px; letter-spacing: -.2px; }
+    .section-head span { font-size: 12px; color: var(--muted); }
+    .categories { display: flex; flex-wrap: wrap; gap: 8px; }
+    .category-chip { border: 1px solid var(--line); background: #fff; color: #687187; padding: 9px 14px; border-radius: 999px; font-size: 13px; cursor: pointer; min-height: 38px; }
+    .category-chip.active { color: var(--accent); border-color: #d9dcff; background: var(--accent-soft); font-weight: 650; }
+    .category-chip .count { opacity: .7; margin-left: 5px; }
+    .tools-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .tool-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 21px; min-height: 220px; display: flex; flex-direction: column; box-shadow: 0 3px 10px #17203304; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+    .tool-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: #d9dcff; }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .tool-icon { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 16px; }
+    .tool-icon svg { width: 24px; height: 24px; }
+    .violet { color: #5b63e6; background: #eef0ff; } .peach { color: #c66d38; background: #fff0e5; }
+    .mint { color: #248d78; background: #e4f8f2; } .blue { color: #3678c8; background: #e8f3ff; }
+    .card-menu { border: 0; background: transparent; color: #9aa1b0; cursor: pointer; font-size: 20px; padding: 4px 7px; border-radius: 8px; }
+    .card-menu:hover { background: #f3f4f8; }
+    .tool-card h4 { font-size: 17px; margin: 18px 0 7px; letter-spacing: -.3px; }
+    .tool-card p { font-size: 13px; color: var(--muted); line-height: 1.65; margin: 0; }
+    .card-bottom { margin-top: auto; padding-top: 20px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .tag { font-size: 11px; color: #717b91; background: #f5f6fa; border-radius: 7px; padding: 6px 9px; }
+    .launch { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 0 14px; background: var(--accent); color: white; border-radius: 11px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+    .launch:hover { background: #4d55d3; }
+    .launch svg { width: 14px; height: 14px; }
+    .empty { display: none; border: 1px dashed #d9deea; border-radius: 18px; text-align: center; padding: 40px 20px; color: var(--muted); background: #ffffff80; }
+    .footer { display: flex; justify-content: space-between; gap: 15px; padding: 34px 0 24px; color: #8a92a3; font-size: 12px; }
+    .modal-backdrop { display: none; position: fixed; inset: 0; z-index: 10; background: #18203955; backdrop-filter: blur(0); padding: 18px; align-items: center; justify-content: center; opacity: 0; }
+    .modal-backdrop.show { display: flex; animation: backdropIn .24s ease-out forwards; backdrop-filter: blur(7px); }
+    .modal { width: min(440px, 100%); background: #fff; border: 1px solid #ffffffb0; border-radius: 22px; box-shadow: 0 25px 90px #12182b30; padding: 24px; transform: translateY(14px) scale(.965); opacity: 0; }
+    .modal-backdrop.show .modal { animation: modalPopIn .32s cubic-bezier(.2,.8,.2,1) .02s forwards; }
+    @keyframes backdropIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes modalPopIn { 0% { opacity: 0; transform: translateY(14px) scale(.965); } 70% { opacity: 1; transform: translateY(-2px) scale(1.006); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+    .modal h3 { margin: 0 0 8px; font-size: 19px; }
+    .modal p { color: var(--muted); font-size: 13px; line-height: 1.6; margin: 0 0 20px; }
+    .field-label { display: block; font-size: 12px; font-weight: 700; color: #586177; margin: 14px 0 7px; }
+    .field { width: 100%; min-height: 44px; border: 1px solid var(--line); border-radius: 12px; padding: 0 12px; background: white; color: var(--text); }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 22px; }
+    .primary { border: 0; background: var(--accent); color: white; min-height: 42px; padding: 0 16px; border-radius: 11px; cursor: pointer; font-weight: 650; }
+    .secondary { border: 1px solid var(--line); background: white; color: #5d667a; min-height: 42px; padding: 0 16px; border-radius: 11px; cursor: pointer; }
+    .toast { position: fixed; bottom: 22px; left: 50%; transform: translate(-50%, 14px) scale(.97); background: #20283c; color: white; border-radius: 12px; padding: 12px 16px; font-size: 13px; opacity: 0; pointer-events: none; transition: opacity .22s ease, transform .28s cubic-bezier(.2,.8,.2,1); z-index: 20; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0) scale(1); }
+    @media (prefers-reduced-motion: reduce) { .modal-backdrop.show, .modal-backdrop.show .modal { animation: none; } .modal-backdrop.show { opacity: 1; } .modal-backdrop.show .modal { opacity: 1; transform: none; } .toast { transition: none; } }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid #858af5; outline-offset: 3px; }
+    @media (max-width: 800px) { .tools-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .hero { padding-top: 34px; } }
+    @media (max-width: 560px) {
+      .shell { width: min(100% - 28px, 500px); }
+      header { padding-top: 15px; }
+      .brand-mark { width: 40px; height: 40px; border-radius: 13px; }
+      .brand h1 { font-size: 15px; } .brand p { font-size: 11px; }
+      .top-actions .pill { min-height: 39px; padding: 0 10px; font-size: 12px; }
+      .hero { display: block; padding: 35px 0 18px; }
+      .hero h2 { font-size: 35px; letter-spacing: -1.2px; }
+      .hero p { font-size: 14px; }
+      .hero-stat { display: none; }
+      .toolbar { align-items: stretch; flex-direction: column; }
+      .search-wrap { max-width: none; }
+      .toolbar-right { justify-content: space-between; }
+      .select { flex: 1; max-width: none; }
+      .tools-grid { grid-template-columns: 1fr; gap: 12px; }
+      .tool-card { min-height: 195px; padding: 18px; }
+      .tool-card h4 { margin-top: 14px; }
+      .section-head { margin-top: 24px; }
+      .footer { flex-direction: column; padding-bottom: 20px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; scroll-behavior: auto !important; } }
+  .no-copy-token{user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none}
+</style>
+</head>
+<body>
+  <header>
+    <div class="shell topbar">
+      <a class="brand" href="#" aria-label="教学小工具箱首页">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><path d="M17.5 14v7M14 17.5h7"/></svg>
+        </div>
+        <div><h1>教学小工具箱</h1><p>Teaching Toolkit</p></div>
+      </a>
+      <div class="top-actions">
+        <button class="pill" id="gistSyncBtn" type="button">Gist Sync</button><button class="pill" id="languageToggle" type="button">中文</button><button class="pill" id="addToolBtn" type="button">＋ 添加工具</button><button class="pill" id="manageCategories" type="button">管理分类</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">YOUR CLASSROOM, SIMPLIFIED</div>
+        <h2>让每一堂课，<br>都更轻松一点。</h2>
+        <p>把常用的教学小工具放在一起。快速找到需要的功能，少一点切换，多一点专注。</p>
+      </div>
+      <div class="hero-stat"><strong id="toolCount">02</strong><span>个可用工具</span></div>
+    </section>
+
+    <div class="toolbar">
+      <label class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <input class="search" id="search" type="search" placeholder="搜索工具名称或用途…" aria-label="搜索工具">
+      </label>
+      <div class="toolbar-right">
+        <select class="select" id="sort" aria-label="工具排序">
+          <option value="default">默认排序</option><option value="name">按名称排序</option>
+        </select>
+        <button class="pill" id="resetFilters" type="button">重置</button>
+      </div>
+    </div>
+
+    <section>
+      <div class="section-head"><h3>工具分类</h3><span>选择分类，快速筛选</span></div>
+      <div class="categories" id="categories" aria-label="工具分类"></div>
+    </section>
+
+    <section>
+      <div class="section-head"><h3 id="listTitle">全部工具</h3><span id="resultCount">2 个工具</span></div>
+      <div class="tools-grid" id="toolsGrid"></div>
+      <div class="empty" id="emptyState">没有找到符合条件的工具。<br>试试其他关键词或分类。</div>
+    </section>
+
+    <footer class="footer"><span>© <span id="year"></span> Teaching Toolkit</span><span>简洁 · 实用 · 为课堂而设计</span></footer>
+  </main>
+
+  <div class="modal-backdrop" id="categoryModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <h3 id="modalTitle">管理工具分类</h3>
+      <p>新增分类后，可以在工具卡片的菜单中调整工具归属。分类设置保存在当前浏览器中。</p>
+      <label class="field-label" for="newCategory">新增分类名称</label>
+      <input class="field" id="newCategory" maxlength="24" placeholder="例如：课堂互动">
+      <div class="field-label">现有分类</div>
+      <div id="categoryManagerList" style="display:grid;gap:8px"></div>
+      <div class="modal-actions"><button class="secondary" id="closeModal" type="button">关闭</button><button class="primary" id="addCategory" type="button">添加分类</button></div>
+    </div>
+  </div>
+  <div class="modal-backdrop" id="toolModal" role="dialog" aria-modal="true" aria-labelledby="toolModalTitle">
+    <div class="modal">
+      <h3 id="toolModalTitle">添加工具</h3>
+      <p id="toolModalHint">填写工具信息后保存。</p>
+      <label class="field-label" for="toolName">工具名称（中文）</label><input class="field" id="toolName" maxlength="80" placeholder="例如：课堂计时器">
+      <label class="field-label" for="toolNameEn">Tool name (English)</label><input class="field" id="toolNameEn" maxlength="80" placeholder="e.g. Classroom Timer">
+      <label class="field-label" for="toolDesc">工具介绍（中文）</label><input class="field" id="toolDesc" maxlength="240" placeholder="简短介绍工具用途">
+      <label class="field-label" for="toolDescEn">Description (English)</label><input class="field" id="toolDescEn" maxlength="240" placeholder="Briefly describe the tool">
+      <label class="field-label" for="toolUrl">工具网址 URL</label><input class="field" id="toolUrl" type="url" required placeholder="https://example.com">
+      <label class="field-label" for="toolCategory">分类</label><select class="field" id="toolCategory"></select>
+      <label class="field-label" for="toolTag">标签 / Tag</label><input class="field" id="toolTag" maxlength="40" placeholder="学习练习 / Practice">
+      <div class="modal-actions"><button class="secondary" id="cancelTool" type="button">取消</button><button class="primary" id="saveTool" type="button">保存工具</button></div>
+    </div>
+  </div>
+  <div class="modal-backdrop" id="gistModal" role="dialog" aria-modal="true" aria-labelledby="gistModalTitle">
+    <div class="modal">
+      <h3 id="gistModalTitle">GitHub Gist Sync</h3>
+      <p id="gistModalDescription">Connect a GitHub token and Gist ID to sync your tools and categories across devices.</p>
+      <label class="field-label" for="gistToken">GitHub Personal Access Token</label>
+      <input class="field no-copy-token" id="gistToken" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="github_pat_…" aria-describedby="gistTokenSecurityNote">
+      <p id="gistTokenSecurityNote" style="margin:7px 0 0;font-size:12px;line-height:1.5;color:#6b7280">Token is encrypted with AES-GCM in this browser. This does not protect against malicious scripts running on this page.</p>
+      <label class="field-label" for="gistId">Gist ID</label>
+      <input class="field" id="gistId" autocomplete="off" placeholder="Paste the Gist ID or URL">
+      <label style="display:flex;align-items:center;gap:9px;margin-top:14px;font-size:13px;color:#586177;font-weight:650"><input id="autoGistSync" type="checkbox" style="width:17px;height:17px;accent-color:var(--accent)"> <span id="autoGistSyncLabel">Automatic sync after changes</span></label>
+      <p id="gistStatus" style="margin:12px 0 0"></p>
+      <div class="modal-actions" style="flex-wrap:wrap">
+        <button class="secondary" id="closeGist" type="button">Close</button>
+        <button class="secondary" id="syncFromGist" type="button">Sync from Gist</button>
+        <button class="primary" id="syncToGist" type="button">Sync to Gist</button>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const STORAGE_KEY = "teaching-toolkit-settings-v1";
+    const defaults = {
+      categories: ["全部工具", "词汇学习", "课堂互动", "效率工具"],
+      assignments: { vocabulary: "词汇学习", wheel: "课堂互动" }
+    };
+    let tools = [
+      { id:"vocabulary", name:"词汇卡片", en:"Vocabulary Cards", desc:"制作与复习词汇卡片，让词汇练习更直观、更有互动感。", descEn:"Create and review vocabulary cards for more visual, interactive practice.", category:"词汇学习", url:"https://wordcards-jink.onrender.com/", tag:"学习练习", icon:"cards", tone:"violet" },
+      { id:"wheel", name:"大转盘", en:"Spinning Wheel", desc:"随机抽人、抽题或决定课堂任务，让课堂互动更有趣。", descEn:"Randomly select students, questions, or classroom activities.", category:"课堂互动", url:"https://spinning-wheel-nk6h.onrender.com/", tag:"随机选择", icon:"wheel", tone:"peach" }
+    ];
+    let language = "en"; // Always start in English when the page is opened.
+    let editingToolId = null;
+    let settings = loadSettings();
+    try {
+      const savedTools = JSON.parse(localStorage.getItem("teaching-toolkit-tools-v1") || "null");
+      if (Array.isArray(savedTools)) tools = savedTools;
+    } catch (e) {}
+    function saveTools() { localStorage.setItem("teaching-toolkit-tools-v1", JSON.stringify(tools)); }
+    const categoryEN = {"全部工具":"All tools","词汇学习":"Vocabulary","课堂互动":"Classroom interaction","效率工具":"Productivity"};
+    const ui = {
+      zh: {manage:"管理分类",add:"＋ 添加工具",search:"搜索工具名称或用途…",searchAria:"搜索工具",sortDefault:"默认排序",sortName:"按名称排序",reset:"重置",categoryTitle:"工具分类",categoryHint:"选择分类，快速筛选",all:"全部工具",result:"个工具",empty:"没有找到符合条件的工具。<br>试试其他关键词或分类。",launch:"打开工具",count:"个可用工具",footer:"简洁 · 实用 · 为课堂而设计"},
+      en: {manage:"Manage Categories",add:"+ Add Tool",search:"Search tools or descriptions…",searchAria:"Search tools",sortDefault:"Default order",sortName:"Sort by name",reset:"Reset",categoryTitle:"Categories",categoryHint:"Choose a category to filter",all:"All tools",result:"tools",empty:"No tools found.<br>Try another keyword or category.",launch:"Open Tool",count:"tools available",footer:"Simple · Practical · Made for the classroom"}
+    };
+    function trCategory(c) { return language==="en" ? (categoryEN[c] || c) : c; }
+    function applyLanguage() {
+      const en = language==="en";
+      document.documentElement.lang = en ? "en" : "zh-CN";
+      document.title = en ? "Teaching Toolkit" : "教学小工具箱 · Teaching Toolkit";
+      document.getElementById("languageToggle").textContent = en ? "中文" : "English";
+      document.getElementById("gistSyncBtn").textContent = en ? "Gist Sync" : "Gist 同步";
+      document.getElementById("gistModalTitle").textContent = en ? "GitHub Gist Sync" : "GitHub Gist 同步";
+      document.getElementById("gistModalDescription").textContent = en ? "Connect a GitHub token and Gist ID to sync your tools and categories across devices." : "填写 GitHub Token 和 Gist ID，即可在不同设备间同步工具与分类。";
+      document.querySelector('label[for="gistToken"]').textContent = en ? "GitHub Personal Access Token" : "GitHub 个人访问令牌（Token）";
+      document.querySelector('label[for="gistId"]').textContent = "Gist ID";
+      document.getElementById("gistToken").placeholder = en ? "github_pat_…" : "粘贴 GitHub Token";
+      document.getElementById("gistId").placeholder = en ? "Paste the Gist ID or URL" : "粘贴 Gist ID 或网址";
+      document.getElementById("autoGistSyncLabel").textContent = en ? "Automatic sync after changes" : "修改后自动同步到 Gist";
+      document.getElementById("gistTokenSecurityNote").textContent = en ? "Token is encrypted with AES-GCM in this browser. The encryption key is stored on this device for automatic use; this is not a security boundary against malicious scripts running on this page." : "Token 使用 AES-GCM 加密后保存在本浏览器。为支持自动使用，密钥也保存在本机；这不能防御在此页面运行的恶意脚本。";
+      document.getElementById("closeGist").textContent = en ? "Close" : "关闭";
+      document.getElementById("syncFromGist").textContent = en ? "Sync from Gist" : "从 Gist 同步";
+      document.getElementById("syncToGist").textContent = en ? "Sync to Gist" : "同步到 Gist";
+      document.getElementById("manageCategories").textContent = en ? "Manage Categories" : "管理分类";
+      document.getElementById("addToolBtn").textContent = en ? "+ Add Tool" : "＋ 添加工具";
+      document.querySelector(".brand h1").textContent = en ? "Teaching Toolkit" : "教学小工具箱";
+      document.querySelector(".brand p").textContent = en ? "Your classroom, simplified" : "Teaching Toolkit";
+      document.querySelector(".hero h2").innerHTML = en ? "Make every lesson<br>a little easier." : "让每一堂课，<br>都更轻松一点。";
+      document.querySelector(".hero p").textContent = en ? "Keep your favorite teaching tools in one place. Find what you need quickly, switch less, and focus more." : "把常用的教学小工具放在一起。快速找到需要的功能，少一点切换，多一点专注。";
+      document.querySelector(".hero-stat span").textContent = en ? "tools available" : "个可用工具";
+      document.getElementById("search").placeholder = en ? "Search tools or descriptions…" : "搜索工具名称或用途…";
+      document.getElementById("search").setAttribute("aria-label", en ? "Search tools" : "搜索工具");
+      document.getElementById("sort").innerHTML = en ? '<option value="default">Default order</option><option value="name">Sort by name</option>' : '<option value="default">默认排序</option><option value="name">按名称排序</option>';
+      document.getElementById("resetFilters").textContent = en ? "Reset" : "重置";
+      document.querySelectorAll(".section-head")[0].innerHTML = `<h3>${en?"Categories":"工具分类"}</h3><span>${en?"Choose a category to filter":"选择分类，快速筛选"}</span>`;
+      document.getElementById("emptyState").innerHTML = en ? "No tools found.<br>Try another keyword or category." : "没有找到符合条件的工具。<br>试试其他关键词或分类。";
+      document.querySelector(".footer span:last-child").textContent = en ? "Simple · Practical · Made for the classroom" : "简洁 · 实用 · 为课堂而设计";
+      render();
+    }
+    let activeCategory = "全部工具";
+    let query = "";
+    let sortMode = "default";
+    let menuToolId = null;
+
+    function loadSettings() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+        if (saved && Array.isArray(saved.categories) && saved.assignments) {
+          return { categories: [...new Set([...defaults.categories, ...saved.categories])], assignments: { ...defaults.assignments, ...saved.assignments } };
+        }
+      } catch (e) {}
+      return structuredClone(defaults);
+    }
+    function saveSettings() { localStorage.setItem(STORAGE_KEY, JSON.stringify(settings)); }
+    const GIST_CONFIG_KEY = "teaching-toolkit-gist-config-v1";
+    const GIST_KEY_KEY = "teaching-toolkit-gist-aes-key-v1";
+    const GIST_FILENAME = "teaching-toolkit-data.json";
+    function getGistConfig(){ try{return JSON.parse(localStorage.getItem(GIST_CONFIG_KEY)||"{}")}catch(e){return {}} }
+    function gistPayload(){ return { schemaVersion:1, updatedAt:new Date().toISOString(), tools, settings }; }
+    function stablePayload(payload){ return JSON.stringify({tools:payload?.tools||[],settings:payload?.settings||{}}); }
+    function parseGistId(value){ const v=(value||"").trim(); const m=v.match(/gist\.github\.com\/(?:[^/]+\/)?([a-f0-9]{20,})/i); return (m?m[1]:v).replace(/[^a-f0-9]/gi,""); }
+    function setGistStatus(msg){ document.getElementById("gistStatus").textContent=msg; }
+    function bytesToB64(bytes){let bin="";for(const b of bytes)bin+=String.fromCharCode(b);return btoa(bin)}
+    function b64ToBytes(value){return Uint8Array.from(atob(value),c=>c.charCodeAt(0))}
+    async function getLocalAesKey(){
+      let raw=localStorage.getItem(GIST_KEY_KEY);
+      if(!raw){const bytes=crypto.getRandomValues(new Uint8Array(32));raw=bytesToB64(bytes);localStorage.setItem(GIST_KEY_KEY,raw);}
+      return crypto.subtle.importKey("raw",b64ToBytes(raw),{name:"AES-GCM"},false,["encrypt","decrypt"]);
+    }
+    async function encryptGistToken(token){
+      if(!token)return {tokenCipher:"",tokenIv:""};
+      const iv=crypto.getRandomValues(new Uint8Array(12));
+      const key=await getLocalAesKey();
+      const encrypted=await crypto.subtle.encrypt({name:"AES-GCM",iv},key,new TextEncoder().encode(token));
+      return {tokenCipher:bytesToB64(new Uint8Array(encrypted)),tokenIv:bytesToB64(iv)};
+    }
+    async function decryptGistToken(config=getGistConfig()){
+      if(config.tokenCipher&&config.tokenIv){
+        const key=await getLocalAesKey();
+        const clear=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64ToBytes(config.tokenIv)},key,b64ToBytes(config.tokenCipher));
+        return new TextDecoder().decode(clear);
+      }
+      // Migrate older versions that stored the token as plain text.
+      if(config.token){const token=config.token;const encrypted=await encryptGistToken(token);const migrated={...config,...encrypted};delete migrated.token;localStorage.setItem(GIST_CONFIG_KEY,JSON.stringify(migrated));return token;}
+      return "";
+    }
+    function gistText(en,zh){return language==="en"?en:zh;}
+    async function openGistModal(){
+      const c=getGistConfig();
+      document.getElementById("gistToken").value="";
+      try{document.getElementById("gistToken").value=await decryptGistToken(c);}catch(e){setGistStatus(gistText("Could not decrypt the saved token. Re-enter it to reconnect.","无法解密已保存的 Token，请重新输入以重新连接。"));}
+      document.getElementById("gistId").value=c.gistId||"";
+      document.getElementById("autoGistSync").checked=c.autoSync!==false;
+      if(!document.getElementById("gistStatus").textContent) setGistStatus("");
+      document.getElementById("gistModal").classList.add("show");
+    }
+    async function persistGistConfig(){
+      const previous=getGistConfig();
+      const typedToken=document.getElementById("gistToken").value.trim();
+      const token=typedToken||await decryptGistToken(previous);
+      const gistId=parseGistId(document.getElementById("gistId").value)||previous.gistId||"";
+      const encrypted=await encryptGistToken(token);
+      localStorage.setItem(GIST_CONFIG_KEY,JSON.stringify({...encrypted,gistId,autoSync:document.getElementById("autoGistSync").checked}));
+    }
+    async function closeGistModal(){ document.getElementById("gistModal").classList.remove("show"); }
+    async function requestGist(method, body){
+      let token=document.getElementById("gistToken").value.trim();
+      const prior=getGistConfig();
+      if(!token) token=await decryptGistToken(prior);
+      let gistId=parseGistId(document.getElementById("gistId").value)||prior.gistId||"";
+      if(!token) throw new Error(gistText("Enter your GitHub token.","请输入 GitHub Token。"));
+      const headers={"Accept":"application/vnd.github+json","Authorization":"Bearer "+token,"X-GitHub-Api-Version":"2022-11-28"};
+      let response;
+      if(method==="POST") response=await fetch("https://api.github.com/gists",{method,headers:{...headers,"Content-Type":"application/json"},body:JSON.stringify(body)});
+      else { if(!gistId) throw new Error(gistText("Enter a Gist ID.","请输入 Gist ID。")); response=await fetch("https://api.github.com/gists/"+encodeURIComponent(gistId),{method,headers,...(body?{body:JSON.stringify(body)}:{})}); }
+      const data=await response.json().catch(()=>({}));
+      if(!response.ok) throw new Error(data.message||("GitHub API error: "+response.status));
+      if(data.id){gistId=data.id;document.getElementById("gistId").value=gistId;}
+      const cfg=getGistConfig();
+      const encrypted=await encryptGistToken(token);
+      localStorage.setItem(GIST_CONFIG_KEY,JSON.stringify({...encrypted,gistId,autoSync:cfg.autoSync!==false}));
+      document.getElementById("gistToken").value=token;
+      return data;
+    }
+    async function syncToGist(){
+      const btn=document.getElementById("syncToGist");btn.disabled=true;
+      try{
+        let remote=null;
+        const id=parseGistId(document.getElementById("gistId").value);
+        if(id){remote=await requestGist("GET");}
+        const local=gistPayload();
+        if(remote && remote.files?.[GIST_FILENAME]?.content){
+          let old;try{old=JSON.parse(remote.files[GIST_FILENAME].content)}catch(e){old=null;}
+          if(old && stablePayload(old)===stablePayload(local)){showToast(gistText("Gist is already up to date.","Gist 已是最新内容。"));setGistStatus(gistText("No changes to upload.","没有变化，无需上传。"));return;}
+          const localTime=new Date().toLocaleString(); const remoteTime=remote.updated_at?new Date(remote.updated_at).toLocaleString():gistText("unknown","未知");
+          const choice=confirm(gistText(`The local data differs from the Gist.
+Gist last updated: ${remoteTime}
+Local snapshot: ${localTime}
+
+Syncing will overwrite the cloud Gist with local data. Continue?`,`本地内容与 Gist 不同。
+Gist 最近更新时间：${remoteTime}
+本地准备同步时间：${localTime}
+
+继续将用本地内容覆盖云端 Gist，是否继续？`));
+          if(!choice)return;
+        }
+        const payload={description:"Teaching Toolkit sync data",public:remote?remote.public:false,files:{[GIST_FILENAME]:{content:JSON.stringify(local,null,2)}}};
+        const result=id?await requestGist("PATCH",payload):await requestGist("POST",payload);
+        setGistStatus(gistText("Synced to Gist · "+new Date(result.updated_at||Date.now()).toLocaleString(),"已同步到 Gist · "+new Date(result.updated_at||Date.now()).toLocaleString()));
+        showToast(gistText("Synced to Gist successfully.","已成功同步到 Gist。"));
+      }catch(e){setGistStatus(e.message);showToast(gistText("Gist sync failed","Gist 同步失败"));}
+      finally{btn.disabled=false;}
+    }
+    async function syncFromGist(){
+      const btn=document.getElementById("syncFromGist");btn.disabled=true;
+      try{
+        const remote=await requestGist("GET"); const file=remote.files?.[GIST_FILENAME];
+        if(!file?.content) throw new Error(gistText(`The Gist does not contain ${GIST_FILENAME}.`,`Gist 中没有找到 ${GIST_FILENAME}。`));
+        const incoming=JSON.parse(file.content);
+        if(!Array.isArray(incoming.tools)||!incoming.settings||!Array.isArray(incoming.settings.categories)) throw new Error(gistText("The Gist data format is invalid.","Gist 数据格式不正确。"));
+        const current=gistPayload(); const remoteTime=remote.updated_at?new Date(remote.updated_at).toLocaleString():gistText("unknown","未知");
+        if(stablePayload(incoming)===stablePayload(current)){setGistStatus(gistText("Local data already matches the Gist. Gist updated: "+remoteTime,"本地内容与 Gist 一致。Gist 更新时间："+remoteTime));showToast(gistText("Already up to date.","已经是最新版本。"));return;}
+        const localTime=localStorage.getItem("teaching-toolkit-last-local-change")||gistText("not recorded","未记录");
+        if(!confirm(gistText(`The Gist differs from local data.
+Gist last updated: ${remoteTime}
+Local data last changed: ${localTime}
+
+Syncing will replace local tools and categories with the Gist version. Continue?`,`Gist 与本地内容不同。
+Gist 最近更新时间：${remoteTime}
+本地内容最近修改：${localTime}
+
+继续将用 Gist 内容覆盖本地工具和分类，是否继续？`)))return;
+        tools=incoming.tools;settings=incoming.settings;saveTools();saveSettings();render();
+        setGistStatus(gistText("Loaded from Gist · "+remoteTime,"已从 Gist 同步 · "+remoteTime));showToast(gistText("Loaded from Gist successfully.","已成功从 Gist 同步。"));
+      }catch(e){setGistStatus(e.message);showToast(gistText("Gist sync failed","Gist 同步失败"));}
+      finally{btn.disabled=false;}
+    }
+    let autoSyncTimer=null, autoSyncRunning=false, autoSyncQueued=false;
+    function markLocalChange(){
+      localStorage.setItem("teaching-toolkit-last-local-change",new Date().toLocaleString());
+      const cfg=getGistConfig();
+      if(cfg.autoSync===false || !(cfg.tokenCipher||cfg.token) || !cfg.gistId) return;
+      clearTimeout(autoSyncTimer);
+      autoSyncTimer=setTimeout(()=>autoSyncToGist(),900);
+    }
+    async function autoSyncToGist(){
+      const cfg=getGistConfig();
+      if(cfg.autoSync===false || !(cfg.tokenCipher||cfg.token) || !cfg.gistId) return;
+      if(autoSyncRunning){autoSyncQueued=true;return;}
+      autoSyncRunning=true;
+      try{
+        const token=await decryptGistToken(cfg);
+        if(!token) throw new Error(gistText("Enter your GitHub token in Gist Sync first.","请先在 Gist 同步中输入 GitHub Token。"));
+        const remote=await fetch("https://api.github.com/gists/"+encodeURIComponent(cfg.gistId),{headers:{"Accept":"application/vnd.github+json","Authorization":"Bearer "+token,"X-GitHub-Api-Version":"2022-11-28"}});
+        const remoteData=await remote.json().catch(()=>({}));
+        if(!remote.ok) throw new Error(remoteData.message||("GitHub API error: "+remote.status));
+        const local=gistPayload();
+        let old=null;try{old=JSON.parse(remoteData.files?.[GIST_FILENAME]?.content||"null");}catch(e){}
+        if(old && stablePayload(old)===stablePayload(local)) return;
+        const payload={description:remoteData.description||"Teaching Toolkit sync data",public:!!remoteData.public,files:{[GIST_FILENAME]:{content:JSON.stringify(local,null,2)}}};
+        const response=await fetch("https://api.github.com/gists/"+encodeURIComponent(cfg.gistId),{method:"PATCH",headers:{"Accept":"application/vnd.github+json","Authorization":"Bearer "+token,"X-GitHub-Api-Version":"2022-11-28","Content-Type":"application/json"},body:JSON.stringify(payload)});
+        const result=await response.json().catch(()=>({}));
+        if(!response.ok) throw new Error(result.message||("GitHub API error: "+response.status));
+        if(document.getElementById("gistModal").classList.contains("show")) setGistStatus(gistText("Auto-synced · "+new Date(result.updated_at||Date.now()).toLocaleString(),"已自动同步 · "+new Date(result.updated_at||Date.now()).toLocaleString()));
+      }catch(e){
+        if(document.getElementById("gistModal").classList.contains("show")) setGistStatus(gistText("Automatic sync failed: "+e.message,"自动同步失败："+e.message));
+        else showToast(gistText("Gist auto-sync failed","Gist 自动同步失败"));
+      }finally{
+        autoSyncRunning=false;
+        if(autoSyncQueued){autoSyncQueued=false;autoSyncTimer=setTimeout(()=>autoSyncToGist(),500);}
+      }
+    }
+    document.getElementById("autoGistSync").addEventListener("change",async()=>{try{await persistGistConfig();if(document.getElementById("autoGistSync").checked)markLocalChange();}catch(e){setGistStatus(gistText("Token encryption failed. Use a secure modern browser context.","Token 加密失败，请在安全的现代浏览器环境中使用。"));}});
+    // Best-effort UI protections: prevent selecting/copying/cutting the token field.
+    const tokenInput=document.getElementById("gistToken");
+    tokenInput.addEventListener("copy",e=>e.preventDefault());
+    tokenInput.addEventListener("cut",e=>e.preventDefault());
+    tokenInput.addEventListener("contextmenu",e=>e.preventDefault());
+    tokenInput.addEventListener("selectstart",e=>e.preventDefault());
+    tokenInput.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&["c","x","a"].includes(e.key.toLowerCase()))e.preventDefault();if(e.shiftKey&&e.key==="Insert")e.preventDefault();});
+    const icons = {
+      cards: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="13" height="16" rx="2"/><path d="M4 7v12a2 2 0 0 0 2 2h11M10 8h7M10 12h5"/></svg>',
+      wheel: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8.5"/><path d="m12 4.5 2.2 6.2 6.3 2.3M12 13l-5.5-5.4M12 13l-1 8.4M12 13l8.1-3.2M12 13l-7.7 3.2"/><path d="m9 2 3 2.5L15 2"/></svg>',
+      external: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3h7v7M10 14 21 3"/><path d="M19 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6"/></svg>'
+    };
+    function categoryFor(tool) { return settings.assignments[tool.id] || tool.category; }
+    function renderCategories() {
+      const el = document.getElementById("categories");
+      const cats = settings.categories.filter(c => c === "全部工具" || tools.some(t => categoryFor(t) === c) || c !== "全部工具");
+      el.innerHTML = cats.map(c => {
+        const count = c === "全部工具" ? tools.length : tools.filter(t => categoryFor(t) === c).length;
+        return `<button class="category-chip ${activeCategory===c?"active":""}" type="button" data-category="${escapeHtml(c)}">${escapeHtml(trCategory(c))}<span class="count">${count}</span></button>`;
+      }).join("");
+      el.querySelectorAll("[data-category]").forEach(btn => btn.addEventListener("click", () => { activeCategory = btn.dataset.category; render(); }));
+    }
+    function renderTools() {
+      let list = tools.filter(t => {
+        const catMatch = activeCategory === "全部工具" || categoryFor(t) === activeCategory;
+        const haystack = `${t.name} ${t.en} ${t.desc} ${t.descEn||""} ${categoryFor(t)} ${t.tag}`.toLowerCase();
+        return catMatch && haystack.includes(query.toLowerCase());
+      });
+      if (sortMode === "name") list.sort((a,b)=>a.name.localeCompare(b.name,"zh-CN"));
+      document.getElementById("toolCount").textContent = String(tools.length).padStart(2,"0");
+      document.getElementById("resultCount").textContent = `${list.length} ${language==="en"?"tools":"个工具"}`;
+      document.getElementById("listTitle").textContent = activeCategory === "全部工具" ? (language==="en"?"All tools":"全部工具") : trCategory(activeCategory);
+      const grid = document.getElementById("toolsGrid");
+      grid.innerHTML = list.map(t => `
+        <article class="tool-card">
+          <div class="card-top"><div class="tool-icon ${t.tone}">${icons[t.icon]}</div>
+            <button class="card-menu" type="button" data-manage="${t.id}" aria-label="${language==="en"?"Edit":"编辑"} ${escapeHtml(t.name)}" title="${language==="en"?"Edit tool":"编辑工具"}">···</button></div>
+          <h4>${escapeHtml(language==="en"?(t.en||t.name):t.name)}</h4><p>${escapeHtml(language==="en"?(t.descEn||t.desc):t.desc)}</p>
+          <div class="card-bottom"><span class="tag">${escapeHtml(trCategory(categoryFor(t)))}</span>
+            <a class="launch" href="${t.url}" target="_blank" rel="noopener noreferrer">${language==="en"?"Open Tool":"打开工具"} ${icons.external}</a></div>
+        </article>`).join("");
+      document.getElementById("emptyState").style.display = list.length ? "none" : "block";
+      grid.style.display = list.length ? "grid" : "none";
+      grid.querySelectorAll("[data-manage]").forEach(btn => btn.addEventListener("click", () => openToolEditor(btn.dataset.manage)));
+    }
+    function render() { renderCategories(); renderTools(); }
+    function escapeHtml(value) { return String(value).replace(/[&<>"']/g, ch => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[ch])); }
+    function showToast(message) {
+      const el = document.getElementById("toast"); el.textContent = message; el.classList.add("show");
+      clearTimeout(showToast.timer); showToast.timer = setTimeout(()=>el.classList.remove("show"), 2300);
+    }
+    function openModal() {
+      document.getElementById("categoryModal").classList.add("show");
+      document.getElementById("newCategory").focus();
+      renderCategoryManager();
+    }
+    function closeModal() { document.getElementById("categoryModal").classList.remove("show"); }
+    function renderCategoryManager() {
+      const el = document.getElementById("categoryManagerList");
+      el.innerHTML = settings.categories.filter(c=>c!=="全部工具").map(c => {
+        const used = tools.some(t=>categoryFor(t)===c);
+        const removable = !used && !["词汇学习","课堂互动","效率工具"].includes(c);
+        return `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-size:13px"><span>${escapeHtml(c)}${used?' <span style="color:#9299a8">· 使用中</span>':''}</span>${removable?`<button type="button" data-delete-cat="${escapeHtml(c)}" class="secondary" style="min-height:30px;padding:0 9px;font-size:11px">删除</button>`:""}</div>`;
+      }).join("");
+      el.querySelectorAll("[data-delete-cat]").forEach(btn=>btn.addEventListener("click",()=>{
+        settings.categories = settings.categories.filter(c=>c!==btn.dataset.deleteCat); saveSettings(); markLocalChange(); renderCategoryManager(); render();
+        showToast("分类已删除");
+      }));
+    }
+    function openAssign(id) {
+      const tool = tools.find(t=>t.id===id); if(!tool) return;
+      const choices = settings.categories.filter(c=>c!=="全部工具").map(c=>`<option value="${escapeHtml(c)}" ${categoryFor(tool)===c?"selected":""}>${escapeHtml(c)}</option>`).join("");
+      const modal = document.getElementById("categoryModal");
+      document.getElementById("modalTitle").textContent = `调整「${tool.name}」分类`;
+      modal.querySelector(".modal > p").textContent = "选择一个分类，工具会立即显示在对应分类下。";
+      document.getElementById("newCategory").parentElement.style.display = "none";
+      document.querySelector(".modal .field-label:not([for])").style.display = "none";
+      openModal();
+      document.getElementById("categoryManagerList").innerHTML = `<label class="field-label" for="assignSelect">工具分类</label><select class="field" id="assignSelect">${choices}</select>`;
+      document.getElementById("addCategory").textContent = "保存分类";
+      document.getElementById("addCategory").onclick = () => {
+        settings.assignments[id] = document.getElementById("assignSelect").value; saveSettings(); markLocalChange();
+        document.getElementById("newCategory").parentElement.style.display = "";
+        document.querySelector(".modal .field-label:not([for])").style.display = "";
+        document.getElementById("addCategory").textContent = "添加分类";
+        document.getElementById("addCategory").onclick = addCategory;
+        document.getElementById("modalTitle").textContent = "管理工具分类";
+        document.getElementById("categoryModal").querySelector(".modal > p").textContent = "新增分类后，可以在工具卡片的菜单中调整工具归属。分类设置保存在当前浏览器中。";
+        render(); closeModal(); showToast("工具分类已更新");
+      };
+    }
+    function addCategory() {
+      const input = document.getElementById("newCategory");
+      const name = input.value.trim();
+      if (!name) { showToast("请先输入分类名称"); input.focus(); return; }
+      if (name === "全部工具" || settings.categories.includes(name)) { showToast("这个分类已存在"); return; }
+      settings.categories.push(name); saveSettings(); markLocalChange(); input.value = ""; render(); renderCategoryManager(); showToast("新分类已添加");
+    }
+    document.getElementById("search").addEventListener("input", e=>{query=e.target.value.trim();renderTools();});
+    document.getElementById("sort").addEventListener("change", e=>{sortMode=e.target.value;renderTools();});
+    document.getElementById("resetFilters").addEventListener("click",()=>{query="";sortMode="default";activeCategory="全部工具";document.getElementById("search").value="";document.getElementById("sort").value="default";render();});
+    document.getElementById("manageCategories").addEventListener("click",()=>{
+      document.getElementById("modalTitle").textContent="管理工具分类";
+      document.getElementById("categoryModal").querySelector(".modal > p").textContent="新增分类后，可以在工具卡片的菜单中调整工具归属。分类设置保存在当前浏览器中。";
+      document.getElementById("newCategory").parentElement.style.display="";
+      document.querySelector(".modal .field-label:not([for])").style.display="";
+      document.getElementById("addCategory").textContent="添加分类";
+      document.getElementById("addCategory").onclick=addCategory;
+      openModal();
+    });
+    document.getElementById("addCategory").addEventListener("click", addCategory);
+    document.getElementById("closeModal").addEventListener("click",closeModal);
+    document.getElementById("categoryModal").addEventListener("click",e=>{if(e.target.id==="categoryModal")closeModal();});
+    document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeModal();closeToolEditor();closeGistModal();}});
+    function openToolEditor(id=null) {
+      editingToolId = id;
+      const t = id ? tools.find(x=>x.id===id) : null;
+      document.getElementById("toolModalTitle").textContent = language==="en" ? (t?"Edit tool":"Add tool") : (t?"编辑工具":"添加工具");
+      const fields = {toolName:t?.name||"",toolNameEn:t?.en||"",toolDesc:t?.desc||"",toolDescEn:t?.descEn||"",toolUrl:t?.url||"",toolTag:t?.tag||""};
+      Object.entries(fields).forEach(([key,value])=>document.getElementById(key).value=value);
+      const cat=document.getElementById("toolCategory");
+      cat.innerHTML=settings.categories.filter(c=>c!=="全部工具").map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(trCategory(c))}</option>`).join("");
+      cat.value=t?categoryFor(t):settings.categories.find(c=>c!=="全部工具")||"效率工具";
+      document.getElementById("saveTool").textContent=language==="en"?"Save tool":"保存工具";
+      document.getElementById("cancelTool").textContent=language==="en"?"Cancel":"取消";
+      document.getElementById("toolModal").classList.add("show");
+      document.getElementById("toolName").focus();
+    }
+    function closeToolEditor(){document.getElementById("toolModal").classList.remove("show");}
+    function saveToolEditor(){
+      const name=document.getElementById("toolName").value.trim(), en=document.getElementById("toolNameEn").value.trim();
+      let url=document.getElementById("toolUrl").value.trim();
+      if(!name&&!en){showToast(language==="en"?"Enter a tool name":"请填写工具名称");return;}
+      try { const parsed=new URL(url); if(!["http:","https:"].includes(parsed.protocol)) throw 0; } catch(e){showToast(language==="en"?"Enter a valid http(s) URL":"请输入有效的 http(s) 网址");return;}
+      const item={id:editingToolId||("tool-"+Date.now()),name:name||en,en:en||name,desc:document.getElementById("toolDesc").value.trim(),descEn:document.getElementById("toolDescEn").value.trim(),url,tag:document.getElementById("toolTag").value.trim()||(language==="en"?"Tool":"工具"),icon:"external",tone:"blue",category:document.getElementById("toolCategory").value};
+      if(editingToolId){const index=tools.findIndex(x=>x.id===editingToolId);if(index>=0)tools[index]=item;settings.assignments[item.id]=item.category;}
+      else {tools.push(item);settings.assignments[item.id]=item.category;}
+      saveTools();saveSettings();markLocalChange();closeToolEditor();render();showToast(language==="en"?"Tool saved":"工具已保存");
+    }
+    document.getElementById("languageToggle").addEventListener("click",()=>{language=language==="en"?"zh":"en";applyLanguage();});
+    document.getElementById("gistSyncBtn").addEventListener("click",openGistModal);
+    document.getElementById("closeGist").addEventListener("click",closeGistModal);
+    document.getElementById("syncToGist").addEventListener("click",async()=>{try{await persistGistConfig();await syncToGist();}catch(e){setGistStatus(e.message);}});
+    document.getElementById("syncFromGist").addEventListener("click",async()=>{try{await persistGistConfig();await syncFromGist();}catch(e){setGistStatus(e.message);}});
+    document.getElementById("gistModal").addEventListener("click",e=>{if(e.target.id==="gistModal")closeGistModal();});
+    document.getElementById("addToolBtn").addEventListener("click",()=>openToolEditor());
+    document.getElementById("cancelTool").addEventListener("click",closeToolEditor);
+    document.getElementById("saveTool").addEventListener("click",saveToolEditor);
+    document.getElementById("toolModal").addEventListener("click",e=>{if(e.target.id==="toolModal")closeToolEditor();});
+    document.getElementById("year").textContent = new Date().getFullYear();
+    applyLanguage();
+  </script>
+</body>
+</html>
